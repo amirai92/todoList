@@ -1,52 +1,49 @@
 import React, { useState, useEffect } from "react";
 import Form from "./components/Form";
 import TodoList from "./components/TodoList";
-import "./App.css";
 
 const App = () => {
   const [inputText, setInputText] = useState("");
+  const [inputDescription, setInputDescription] = useState("");
   const [todos, setTodos] = useState([]);
   const [status, setStatus] = useState("all");
   const [filteredTodos, setFilteredTodos] = useState([]);
 
   useEffect(() => {
-    getLocalyTodos();
+    (function () {
+      if (localStorage.getItem("todos") === null) {
+        localStorage.setItem("todos", JSON.stringify([]));
+      } else {
+        let localTodo = JSON.parse(localStorage.getItem("todos"));
+        setTodos(localTodo);
+      }
+    })();
   }, []);
 
   useEffect(() => {
-    handleFilteredTodo();
-    saveLocalyTodos();
+    (function () {
+      switch (status) {
+        case "completed":
+          setFilteredTodos(todos.filter((todo) => todo.completed === true));
+          break;
+        case "uncompleted":
+          setFilteredTodos(todos.filter((todo) => todo.completed === false));
+          break;
+        default:
+          setFilteredTodos(todos);
+          break;
+      }
+    })();
+
+    (function () {
+      localStorage.setItem("todos", JSON.stringify(todos));
+    })();
   }, [todos, status]);
 
-  const handleFilteredTodo = () => {
-    switch (status) {
-      case "completed":
-        setFilteredTodos(todos.filter((todo) => todo.completed === true));
-        break;
-      case "uncompleted":
-        setFilteredTodos(todos.filter((todo) => todo.completed === false));
-        break;
-      default:
-        setFilteredTodos(todos);
-        break;
-    }
-  };
-
-  const saveLocalyTodos = () =>
-    localStorage.setItem("todos", JSON.stringify(todos));
-
-  const getLocalyTodos = () => {
-    if (localStorage.getItem("todos") === null) {
-      localStorage.setItem("todos", JSON.stringify([]));
-    } else {
-      let localTodo = JSON.parse(localStorage.getItem("todos"));
-      setTodos(localTodo);
-    }
-  };
   return (
-    <div>
-      <header>
-        <h1>Todo List Task Amir Aizin</h1>
+    <div className="font-mono text-white bg-blue-300 border rounded w-screen h-screen p-5">
+      <header className="flex justify-center align-center h-28 rounded-xl bg-blue-800 mb-8">
+        <h1 className="text-7xl mb-10 mt-4">Todo List</h1>
       </header>
       <Form
         todos={todos}
@@ -54,7 +51,10 @@ const App = () => {
         inputText={inputText}
         setInputText={setInputText}
         setStatus={setStatus}
+        setInputDescription={setInputDescription}
+        inputDescription={inputDescription}
       />
+      <hr></hr>
       <TodoList
         todos={todos}
         setTodos={setTodos}

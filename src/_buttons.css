@@ -1,0 +1,15 @@
+.submit-button {
+  background-color: #111827;
+  width: 55px;
+  margin: auto;
+  border-radius: 24px;
+  padding: 1rem;
+  margin-left: 1rem;
+}
+
+li {
+  white-space: nowrap;
+  overflow: hidden;
+  /* text-overflow: ellipsis; */
+  width: 5rem;
+}
