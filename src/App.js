@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Form from "./components/Form";
+import Select from "./components/Select";
 import TodoList from "./components/TodoList";
 
 const App = () => {
-  const [inputText, setInputText] = useState("");
-  const [inputDescription, setInputDescription] = useState("");
+  const [inputEstimated, setInputEstimated] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
   const [todos, setTodos] = useState([]);
   const [status, setStatus] = useState("all");
   const [filteredTodos, setFilteredTodos] = useState([]);
 
   useEffect(() => {
-    (function () {
+    (() => {
       if (localStorage.getItem("todos") === null) {
         localStorage.setItem("todos", JSON.stringify([]));
       } else {
@@ -21,44 +23,42 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    (function () {
-      switch (status) {
-        case "completed":
-          setFilteredTodos(todos.filter((todo) => todo.completed === true));
-          break;
-        case "uncompleted":
-          setFilteredTodos(todos.filter((todo) => todo.completed === false));
-          break;
-        default:
-          setFilteredTodos(todos);
-          break;
-      }
-    })();
+    switch (status) {
+      case "completed":
+        setFilteredTodos(todos.filter((todo) => todo.completed === true));
+        break;
+      case "uncompleted":
+        setFilteredTodos(todos.filter((todo) => todo.completed === false));
+        break;
+      default:
+        setFilteredTodos(todos);
+        break;
+    }
 
-    (function () {
+    (() => {
       localStorage.setItem("todos", JSON.stringify(todos));
     })();
   }, [todos, status]);
 
+  const handleStatus = (e) => {
+    setStatus(e.target.value);
+  };
+
   return (
-    <div className="font-mono text-white bg-blue-300 border rounded w-screen h-screen p-5">
-      <header className="flex justify-center align-center h-28 rounded-xl bg-blue-800 mb-8">
-        <h1 className="text-7xl mb-10 mt-4">Todo List</h1>
-      </header>
-      <Form
-        todos={todos}
-        setTodos={setTodos}
-        inputText={inputText}
-        setInputText={setInputText}
-        setStatus={setStatus}
-        setInputDescription={setInputDescription}
-        inputDescription={inputDescription}
-      />
-      <hr></hr>
+    <div className="font-sans	text-white border rounded w-screen h-screen p-5">
+      <div className="flex">
+        <h1 className="m-auto text-5xl mb-5 text-black">To Do List</h1>
+      </div>
+      <Form todos={todos} setTodos={setTodos} />
+      <div className="flex">
+        <Select handleStatus={handleStatus} />
+      </div>
       <TodoList
         todos={todos}
         setTodos={setTodos}
         filteredTodos={filteredTodos}
+        inputEstimated={inputEstimated}
+        setInputEstimated={setInputEstimated}
       />
     </div>
   );
